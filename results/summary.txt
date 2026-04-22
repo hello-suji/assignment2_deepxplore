@@ -1,0 +1,3 @@
+Neuron coverage (Model A): 1.0000
+Neuron coverage (Model B): 1.0000
+Number of disagreements found: 20
