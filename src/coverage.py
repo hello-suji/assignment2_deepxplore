@@ -28,11 +28,14 @@ class NeuronCoverage:
 
             activated = activated.cpu()
 
-            if layer_name not in self.covered:
-                self.covered[layer_name] = torch.zeros_like(activated, dtype=torch.bool)
+            # 🔥 핵심: shape 포함해서 key 분리
+            key = f"{layer_name}_{activated.shape}"
+
+            if key not in self.covered:
+                self.covered[key] = torch.zeros_like(activated, dtype=torch.bool)
                 self.total_neurons += activated.numel()
 
-            self.covered[layer_name] |= activated
+            self.covered[key] |= activated
 
         return hook
 
