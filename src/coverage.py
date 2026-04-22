@@ -19,20 +19,20 @@ class NeuronCoverage:
 
     def _make_hook(self, layer_name):
         def hook(module, inputs, output):
-            # output shape: [B, C, H, W] or [B, N]
             if output.dim() == 4:
-                # channel 단위로 coverage 측정
                 activated = output.detach().amax(dim=(0, 2, 3)) > self.threshold
             elif output.dim() == 2:
                 activated = output.detach().amax(dim=0) > self.threshold
             else:
                 return
 
+            activated = activated.cpu()
+
             if layer_name not in self.covered:
                 self.covered[layer_name] = torch.zeros_like(activated, dtype=torch.bool)
                 self.total_neurons += activated.numel()
 
-            self.covered[layer_name] |= activated.cpu()
+            self.covered[layer_name] |= activated
 
         return hook
 
